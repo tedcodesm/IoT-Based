@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  app:
+    build: .
+    ports:
+      - '4000:4000'
+    volumes:
+      - ./:/app
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/bus_tracker
+      - JWT_SECRET=devsecret
+      - FCM_SERVICE_ACCOUNT_PATH=/app/serviceAccountKey.json
+    depends_on:
+      - mongo
+  mongo:
+    image: mongo:6.0
+    restart: unless-stopped
+    volumes:
+      - mongo-data:/data/db
+volumes:
+  mongo-data:
