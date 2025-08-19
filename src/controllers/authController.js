@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import fs from "fs";
 import admin from "firebase-admin";
 import User from "../models/User.js";
+import { protect } from "../middleware/auth.js";
 
 dotenv.config();
 const router = express.Router();
@@ -154,7 +155,7 @@ router.post("/login", async (req, res) => {
     if (!email || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
-     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return res.status(400).json({ message: "Invalid email address" });
     }
 
@@ -170,9 +171,13 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ message: "Invalid credentials" });
 
     const token = generateToken(user._id);
+
+    const userData = user.toObject();
+    delete userData.password;
+
     res.status(200).json({
       token,
-      user: { id: user._id, username: user.username, email: user.email },
+      user: userData,
     });
   } catch (error) {
     console.error("Error in login route", error);
@@ -198,6 +203,31 @@ router.post("/update-device-token", async (req, res) => {
     res.status(200).json({ success: true });
   } catch (error) {
     console.error("Error updating device token", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+// LOGOUT
+router.post("/logout", protect, async (req, res) => {
+  try {
+    const { token } = req.body; // FCM device token from client
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Remove device token if exists
+    if (token && user.deviceTokens?.includes(token)) {
+      user.deviceTokens = user.deviceTokens.filter((t) => t !== token);
+      await user.save();
+    }
+
+    res.status(200).json({ message: "Logged out successfully" });
+  } catch (error) {
+    console.error("Error in logout route", error);
     res.status(500).json({ message: "Internal server error" });
   }
 });
