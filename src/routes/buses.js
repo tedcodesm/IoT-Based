@@ -11,7 +11,7 @@ import User from "../models/User.js";
 const router = express.Router();
 router.post("/", protect, admin, createBus);
 router.get("/", protect, getBuses);
-router.put("/:plateNumber/destination", protect, admin, setDestination);
+router.put("/:plateNumber/destination", protect, setDestination);
 router.put("/:plateNumber/location", protect, updateLocationViaRest);
 // get all drivers
 router.get("/users/drivers", async (req, res) => {
