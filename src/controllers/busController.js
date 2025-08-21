@@ -67,12 +67,48 @@ export const setDestination = async (req, res) => {
 
     // Update destination
     bus.destination = { type: "Point", coordinates: [lng, lat] };
-    bus.arrivalRadius = radius || bus.arrivalRadius || 80;
+    bus.arrivalRadius = radius || bus.arrivalRadius || 100; // Default to 100 meters if not provided
     bus.arrivalTime = null;
 
     await bus.save();
     res.json(bus);
 
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const getDestinationByDriverId = async (req, res) => {
+  try {
+    const { driverId } = req.params;
+
+    // Check if driver exists
+    const driver = await User.findById(driverId);
+    if (!driver || driver.role !== "driver") {
+      return res.status(404).json({ message: "Driver not found" });
+    }
+
+    // Find bus assigned to this driver
+    const bus = await Bus.findOne({ driver: driverId });
+    if (!bus) {
+      return res.status(404).json({ message: "No bus assigned to this driver" });
+    }
+
+    if (!bus.destination || !bus.destination.coordinates) {
+      return res.status(404).json({ message: "Destination not set" });
+    }
+
+    const [lng, lat] = bus.destination.coordinates;
+
+    res.json({
+      plateNumber: bus.plateNumber,
+      destination: {
+        latitude: lat,
+        longitude: lng,
+      },
+      radius: bus.arrivalRadius || 100,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });

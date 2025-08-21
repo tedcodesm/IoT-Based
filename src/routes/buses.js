@@ -2,6 +2,7 @@ import express from "express";
 import {
   createBus,
   getBuses,
+  getDestinationByDriverId,
   setDestination,
   updateLocationViaRest,
 } from "../controllers/busController.js";
@@ -13,6 +14,8 @@ router.post("/", protect, admin, createBus);
 router.get("/", protect, getBuses);
 router.put("/:plateNumber/destination", protect, setDestination);
 router.put("/:plateNumber/location", protect, updateLocationViaRest);
+router.get("/drivers/:driverId/destination", getDestinationByDriverId);
+
 // get all drivers
 router.get("/users/drivers", async (req, res) => {
   try {
