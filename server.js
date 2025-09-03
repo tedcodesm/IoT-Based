@@ -8,6 +8,7 @@ import authRoutes from './src/controllers/authController.js';
 import busRoutes from './src/routes/buses.js';
 import locationRoutes from './src/routes/locations.js';
 import parentRoutes from './src/routes/parents.js';
+import profileRoutes from './src/routes/profile.js';
 import { initSocket } from './src/services/socketService.js';
 
 dotenv.config();
@@ -27,6 +28,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/buses', busRoutes);
 app.use('/api/locations', locationRoutes);
 app.use('/api/parents', parentRoutes);
+app.use('/api/profile', profileRoutes);
 
 app.get('/', (req, res) => res.send('Bus tracker backend running'));
 
