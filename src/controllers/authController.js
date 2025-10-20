@@ -52,7 +52,7 @@ const sendVerificationEmail = async (otp, email, username) => {
     await transporter.verify();
 
     const message = `<h1>Hello ${username}</h1>
-      <p>Your verification code is <b>${otp}</b> and it expires in 2 minutes.</p>`;
+ <p>Your verification code is <b>${otp}</b> and it expires in 2 minutes.</p>`;
 
     await transporter.sendMail({
       from: verifyemail,
@@ -96,7 +96,7 @@ router.post("/register", async (req, res) => {
       password,
       otp,
       phone,
-      role: role || "parent",
+      role: role ,
     });
 
     await user.save();

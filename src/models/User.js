@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema(
     role: {
       type: String,
       enum: ["parent", "driver", "admin"],
-      default: "parent",
+      default: "",
     },
     deviceTokens: { type: [String], default: [] },
     pickupLocation: {
