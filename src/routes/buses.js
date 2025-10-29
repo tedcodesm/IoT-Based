@@ -2,8 +2,8 @@ import express from "express";
 import {
   createBus,
   getBuses,
-  getDestinationByDriverId,
-  setDestination,
+  getLocationByDriverId,
+  setCurrentLocation,
   updateLocationViaRest,
 } from "../controllers/busController.js";
 import { protect, admin } from "../middleware/auth.js";
@@ -12,9 +12,9 @@ import User from "../models/User.js";
 const router = express.Router();
 router.post("/", protect, admin, createBus);
 router.get("/", protect, getBuses);
-router.put("/:plateNumber/destination", protect, setDestination);
+router.put("/:plateNumber/destination", protect, setCurrentLocation);
 router.put("/:plateNumber/location", protect, updateLocationViaRest);
-router.get("/drivers/:driverId/destination", getDestinationByDriverId);
+router.get("/drivers/:driverId/location", getLocationByDriverId);
 
 // get all drivers
 router.get("/users/drivers", async (req, res) => {

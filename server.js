@@ -16,8 +16,11 @@ dotenv.config();
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
-  cors: { origin: '*', methods: ['GET','POST','PUT'] }
+  cors: { origin: '*', methods: ['GET', 'POST', 'PUT'] },
 });
+
+// Store io instance globally for use in socketService
+global.io = io;
 
 app.use(cors());
 app.use(express.json());
@@ -32,7 +35,7 @@ app.use('/api/profile', profileRoutes);
 
 app.get('/', (req, res) => res.send('Bus tracker backend running'));
 
-// initialize socket handlers and pass io
+// Initialize socket handlers
 initSocket(io);
 
 const PORT = process.env.PORT || 4000;
